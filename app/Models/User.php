@@ -11,6 +11,10 @@ class User extends Authenticatable implements JWTSubject
 {
     use  Notifiable, HasFactory;
 
+    /* RUOLI ALL'INTERNO DELL'APP */
+    const ROLE_SUPER_ADMIN = 'Super';
+    const ROLE_NORMAL_USER = 'Visitatore';
+    const ROLE_PAYING_USER = 'Pagante';
     // Rest omitted for brevity
 
     /**
@@ -30,6 +34,23 @@ class User extends Authenticatable implements JWTSubject
      */
     public function getJWTCustomClaims()
     {
-        return [];
+        return [
+            'role' => $this->role, // Aggiungi il ruolo come custom claim
+        ];
+    }
+
+    public function isSuperAdmin()
+    {
+        return $this->role === self::ROLE_SUPER_ADMIN;
+    }
+
+    public function isNormalUser()
+    {
+        return $this->role === self::ROLE_NORMAL_USER;
+    }
+
+    public function isPayingUser()
+    {
+        return $this->role === self::ROLE_PAYING_USER;
     }
 }
