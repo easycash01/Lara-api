@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
-
+use App\Models\User;
+use Illuminate\Http\Request;
 class AuthController extends Controller
 {
     /**
@@ -14,7 +15,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login']]);
+        $this->middleware('auth:api', ['except' => ['login','register','tuttiUtenti']]);
     }
 
     /**
@@ -30,7 +31,59 @@ class AuthController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        return $this->respondWithToken($token);
+       /*  return $this->respondWithToken($token); */
+
+          // Recupera l'utente autenticato
+    $user = auth()->user();
+
+    // Rispondi con il token e il ruolo dell'utente
+    return response()->json([
+        'token' => $this->respondWithToken($token),
+        'role' => $user->role, // Aggiungi il ruolo dell'utente alla risposta
+    ]);
+    }
+
+    public function register(Request $request)
+    {
+       
+     // Recupera tutti i dati inviati dal form
+    //$formData = $request->all();
+
+     // Validazione dei dati
+     $validator = Validator::make($request->all(), [
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:users',
+        'password' => 'required|min:8',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'success' => false,
+            'errors' => $validator->errors(),
+        ], 422);
+    }
+
+    // Se la validazione passa, creazione dell'utente
+    $user = User::create([
+        'name' => $request->input('name'),
+        'email' => $request->input('email'),
+        'password' => Hash::make($request->input('password')), // Hash della password
+    ]);
+
+    // Risposta JSON
+    return response()->json([
+        'success' => true,
+        'message' => 'Registrazione avvenuta con successo',
+        'data' => $user, // Puoi ritornare i dettagli dell'utente creato
+    ], 201);
+
+
+
+    // Puoi restituire i dati come JSON per verificare che vengano ricevuti correttamente
+    return response()->json([
+        'success' => true,
+        'data' => $formData,
+    ]);
     }
 
     /**
@@ -41,6 +94,12 @@ class AuthController extends Controller
     public function me()
     {
         return response()->json(auth()->user());
+    }
+
+    public function tuttiUtenti()
+    {
+        $allUtenti = User::all();
+        return response()->json($allUtenti);
     }
 
     /**
