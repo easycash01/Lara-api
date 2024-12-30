@@ -2,6 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CustomerAuthController;
+use App\Http\Controllers\ProvaApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +22,8 @@ use Illuminate\Support\Facades\Route;
 });
  */
 
+/* prefisso api/auth */
+
  Route::group([
 
     'middleware' => 'api',
@@ -33,5 +38,15 @@ use Illuminate\Support\Facades\Route;
 
 });
 
-Route::get('/allutenti', [AuthController::class, 'tuttiUtenti']);
-Route::post('/register', [AuthController::class, 'register']);
+//nello user la register non serve 
+/* Route::post('/register', [AuthController::class, 'register']); */
+
+
+Route::get('/allutenti', [ProvaApiController::class, 'prova']);
+
+// Rotte per Customers
+Route::group(['prefix' => 'customer'], function () {
+    Route::post('/login', [CustomerAuthController::class, 'login']);
+    Route::post('/register', [CustomerAuthController::class, 'register']);
+    Route::get('/profile', [CustomerAuthController::class, 'profile']);
+});

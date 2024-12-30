@@ -7,9 +7,9 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory; // Import corretto del trait
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Authenticatable implements JWTSubject
+class Customer extends Authenticatable implements JWTSubject
 {
-    use  Notifiable, HasFactory;
+    use Notifiable, HasFactory;
 
     // Rest omitted for brevity
 
@@ -31,6 +31,6 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         /* return []; */
-        return ['role' => 'user'];
+        return ['role' => 'customer'];
     }
 }

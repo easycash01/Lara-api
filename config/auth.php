@@ -48,11 +48,15 @@ return [
     ],
 
     'guards' => [
-    'api' => [
-        'driver' => 'jwt',
-        'provider' => 'users',
+        'api' => [
+            'driver' => 'jwt',
+            'provider' => 'users', // Questa guardia è per gli utenti
+        ],
+        'customer' => [
+            'driver' => 'jwt',
+            'provider' => 'customers', // Questa guardia è per i customer
+        ],
     ],
-],
 
     /*
     |--------------------------------------------------------------------------
@@ -75,6 +79,11 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
+        ],
+
+        'customers' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Customer::class,
         ],
 
         // 'users' => [
@@ -108,6 +117,12 @@ return [
             'table' => 'password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,
+        ],
+        'customers' => [
+            'provider' => 'customers', // Usa il provider 'customers'
+            'table' => 'password_reset_tokens', // Tabella dei reset delle password
+            'expire' => 60, // Tempo di scadenza del link di reset
+            'throttle' => 60, // Limite di tentativi di reset
         ],
     ],
 

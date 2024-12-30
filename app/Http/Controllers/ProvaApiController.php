@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 
-class AuthController extends Controller
+class ProvaApiController extends Controller
 {
     /**
      * Create a new AuthController instance.
@@ -22,7 +22,7 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function datiUtenti()
+    public function prova()
     {
         return response()->json(['risposta' => 'ok è una prova']);
     }

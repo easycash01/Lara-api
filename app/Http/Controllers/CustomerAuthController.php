@@ -6,8 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
-
-class AuthController extends Controller
+class CustomerAuthController extends Controller
 {
     /**
      * Create a new AuthController instance.
@@ -16,10 +15,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-    
         $this->middleware('auth:api', ['except' => ['login','register','tuttiUtenti']]);
-        $this->middleware('guest')->only(['login', 'register']);
-        $this->middleware('check.usertype:user', ['except' => ['login', 'register', 'tuttiUtenti']]);
     }
 
     /**
@@ -29,22 +25,21 @@ class AuthController extends Controller
      */
     public function login()
     {
-        $credentials = request(['email', 'password']);
 
-        if (! $token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
+    $credentials = $request->only(['username', 'password']);
 
-       /*  return $this->respondWithToken($token); */
+    if (! $token = auth('customer')->attempt($credentials)) {
+        return response()->json(['error' => 'Unauthorized'], 401);
+    }
 
-          // Recupera l'utente autenticato
-    $user = auth()->user();
+      // Recupera il customer autenticato
+      $customer = auth('customer')->user();
 
-    // Rispondi con il token e il ruolo dell'utente
     return response()->json([
         'token' => $this->respondWithToken($token),
-        'role' => $user->role // Aggiungi il ruolo dell'utente alla risposta
+        'customer_info' => $customer
     ]);
+
     }
 
     public function register(Request $request)
@@ -79,10 +74,15 @@ class AuthController extends Controller
         'success' => true,
         'message' => 'Registrazione avvenuta con successo',
         'data' => $user, // Puoi ritornare i dettagli dell'utente creato
-        'data-form' => $formData
     ], 201);
 
 
+
+    // Puoi restituire i dati come JSON per verificare che vengano ricevuti correttamente
+    return response()->json([
+        'success' => true,
+        'data' => $formData,
+    ]);
     }
 
     /**
