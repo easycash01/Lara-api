@@ -15,7 +15,7 @@ class CustomerAuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login','register','tuttiUtenti']]);
+      
     }
 
     /**
@@ -25,19 +25,25 @@ class CustomerAuthController extends Controller
      */
     public function login()
     {
-
-    $credentials = $request->only(['username', 'password']);
+    $credentials = request(['username', 'password']);
 
     if (! $token = auth('customer')->attempt($credentials)) {
-        return response()->json(['error' => 'Unauthorized'], 401);
+        return response()->json(['error' => 'Non autorizzato'], 401);
     }
 
-      // Recupera il customer autenticato
-      $customer = auth('customer')->user();
+    // Recupera il customer autenticato
+    $customer = auth('customer')->user();
+
+    // Decodifica il token per ottenere il ruolo dai claims
+    $decoded = JWTAuth::setToken($token)->getPayload();
 
     return response()->json([
         'token' => $this->respondWithToken($token),
-        'customer_info' => $customer
+        'name' => $customer->name,
+        'cognome' => $customer->cognome,
+        'username' => $customer->username,
+        'email' => $customer->email,
+        'role' => $decoded->get('role') // Ottiene il ruolo 'customer' dai claims
     ]);
 
     }
@@ -50,7 +56,9 @@ class CustomerAuthController extends Controller
 
      // Validazione dei dati
      $validator = Validator::make($request->all(), [
-        'name' => 'required|string|max:255',
+        'nome' => 'required|string|max:255',
+        'cognome' => 'required|string|max:255',
+        'username' => 'required|string|max:255',
         'email' => 'required|email|unique:users',
         'password' => 'required|min:8',
     ]);
@@ -64,9 +72,11 @@ class CustomerAuthController extends Controller
 
     // Se la validazione passa, creazione dell'utente
     $user = User::create([
-        'name' => $request->input('name'),
-        'email' => $request->input('email'),
-        'password' => Hash::make($request->input('password')), // Hash della password
+        'nome'      => $request->input('nome'),
+        'cognome'   => $request->input('cognome'),
+        'username'  => $request->input('username'),
+        'email'     => $request->input('email'),
+        'password'  => Hash::make($request->input('password')), // Hash della password
     ]);
 
     // Risposta JSON

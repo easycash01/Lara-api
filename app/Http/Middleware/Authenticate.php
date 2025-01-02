@@ -14,4 +14,21 @@ class Authenticate extends Middleware
     {
         return $request->expectsJson() ? null : route('login');
     }
+
+      /**
+     * Handle an unauthenticated user.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  array  $guards
+     * @return void
+     *
+     * @throws \Illuminate\Auth\AuthenticationException
+     */
+    protected function unauthenticated($request, array $guards)
+    {
+        abort(response()->json([
+            'error' => 'Non autenticato',
+            'message' => 'Il token non è valido o è scaduto'
+        ], 401)->setEncodingOptions(JSON_UNESCAPED_UNICODE));
+    }
 }

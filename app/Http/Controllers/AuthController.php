@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Illuminate\Support\Facades\Cache;
 
 class AuthController extends Controller
 {
@@ -17,9 +20,6 @@ class AuthController extends Controller
     public function __construct()
     {
     
-        $this->middleware('auth:api', ['except' => ['login','register','tuttiUtenti']]);
-        $this->middleware('guest')->only(['login', 'register']);
-        $this->middleware('check.usertype:user', ['except' => ['login', 'register', 'tuttiUtenti']]);
     }
 
     /**
@@ -31,20 +31,28 @@ class AuthController extends Controller
     {
         $credentials = request(['email', 'password']);
 
-        if (! $token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+        try {
+            if (!$token = auth()->attempt($credentials)) {
+                return response()->json(['error' => 'Credenziali non valide'], 401);
+            }
+
+            // Memorizza lo stato di login dell'utente
+            Cache::put('user_logged_' . $credentials['email'], true, now()->addHours(24));
+
+            $user = auth()->user();
+            $decoded = JWTAuth::setToken($token)->getPayload();
+
+            return response()->json([
+                'token'    => $this->respondWithToken($token),
+                'name'     => $user->name,
+                'mail'     => $user->email,
+                'password' => $user->password,
+                'role'     => $decoded->get('role'),
+            ]);
+
+        } catch (JWTException $e) {
+            return response()->json(['error' => 'Errore durante la creazione del token'], 500);
         }
-
-       /*  return $this->respondWithToken($token); */
-
-          // Recupera l'utente autenticato
-    $user = auth()->user();
-
-    // Rispondi con il token e il ruolo dell'utente
-    return response()->json([
-        'token' => $this->respondWithToken($token),
-        'role' => $user->role // Aggiungi il ruolo dell'utente alla risposta
-    ]);
     }
 
     public function register(Request $request)
@@ -108,9 +116,42 @@ class AuthController extends Controller
      */
     public function logout()
     {
-        auth()->logout();
+        try {
+            // Ottieni l'utente prima di fare logout
+            $user = auth()->user();
+            
+            if (!$user) {
+                return response()->json(['error' => 'Utente non trovato'], 401);
+            }
 
-        return response()->json(['message' => 'Successfully logged out']);
+            // Rimuovi lo stato di login dalla cache PRIMA del logout
+            Cache::forget('user_logged_' . $user->email);
+            
+            // Invalida il token JWT
+            $token = auth()->getToken();
+            JWTAuth::setToken($token)->invalidate();
+            
+            // Esegui il logout
+            auth()->logout(true);
+
+            return response()->json([
+                'message' => 'Logout effettuato con successo',
+                'email' => $user->email // per debug
+            ]);
+            
+        } catch (JWTException $e) {
+            /* \Log::error('Errore JWT durante il logout: ' . $e->getMessage()); */
+            
+            // In caso di errore, assicuriamoci comunque di pulire la cache
+            if ($user = auth()->user()) {
+                Cache::forget('user_logged_' . $user->email);
+            }
+            
+            return response()->json(['error' => 'Errore durante il logout'], 500);
+        } catch (\Exception $e) {
+            /* \Log::error('Errore generico durante il logout: ' . $e->getMessage()); */
+            return response()->json(['error' => 'Errore durante il logout'], 500);
+        }
     }
 
     /**
@@ -135,7 +176,8 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
+            'expires_in' => auth()->factory()->getTTL() * 60,
+            'expires_at' => now()->addMinutes(auth()->factory()->getTTL())->format('Y-m-d H:i:s')
         ]);
     }
 }

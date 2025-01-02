@@ -80,16 +80,10 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
-
         'customers' => [
             'driver' => 'eloquent',
             'model' => App\Models\Customer::class,
         ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
     ],
 
     /*
