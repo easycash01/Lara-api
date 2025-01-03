@@ -18,6 +18,7 @@ class CustomerFactory extends Factory
             'nome' => $faker->firstName(),
             'cognome' => $faker->lastName(),
             'username' => $faker->unique()->userName(),
+            'data_nascita' => $faker->date(),
             'email' => $faker->unique()->safeEmail(),
             'password' => Hash::make('password'),
             'email_verified_at' => now(),

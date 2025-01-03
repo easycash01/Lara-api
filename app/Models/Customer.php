@@ -29,6 +29,7 @@ class Customer extends Authenticatable implements JWTSubject
     protected $fillable = [
         'nome',
         'cognome',
+        'data_nascita',
         'username',
         'email',
         'password',

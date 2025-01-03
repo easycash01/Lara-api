@@ -5,7 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Customer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator; // Aggiungi questo import
+use Illuminate\Support\Facades\Hash;      // Aggiungi questo per Hash
+use Tymon\JWTAuth\Facades\JWTAuth;       // Aggiungi questo per JWTAuth
+
 class CustomerAuthController extends Controller
 {
     /**
@@ -58,6 +63,7 @@ class CustomerAuthController extends Controller
      $validator = Validator::make($request->all(), [
         'nome' => 'required|string|max:255',
         'cognome' => 'required|string|max:255',
+        'data_nascita' => 'required|date',
         'username' => 'required|string|max:255',
         'email' => 'required|email|unique:users',
         'password' => 'required|min:8',
@@ -71,9 +77,10 @@ class CustomerAuthController extends Controller
     }
 
     // Se la validazione passa, creazione dell'utente
-    $user = User::create([
+    $user = Customer::create([
         'nome'      => $request->input('nome'),
         'cognome'   => $request->input('cognome'),
+        'data_nascita' => $request->input('data_nascita'),
         'username'  => $request->input('username'),
         'email'     => $request->input('email'),
         'password'  => Hash::make($request->input('password')), // Hash della password

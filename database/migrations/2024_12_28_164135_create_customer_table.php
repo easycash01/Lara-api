@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('nome');
             $table->string('cognome');
             $table->string('username');
+            $table->date('data_nascita');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
