@@ -44,7 +44,7 @@ class CustomerAuthController extends Controller
 
     return response()->json([
         'token' => $this->respondWithToken($token),
-        'name' => $customer->name,
+        'nome' => $customer->nome,
         'cognome' => $customer->cognome,
         'username' => $customer->username,
         'email' => $customer->email,
