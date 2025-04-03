@@ -11,44 +11,6 @@
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
-
 ## Contributing
 
 Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
@@ -64,3 +26,97 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+
+Un backend Laravel per la gestione dell'autenticazione JWT, con supporto per utenti e clienti, gestione degli avatar e middleware personalizzati.
+
+---
+
+## 🚀 Funzionalità
+
+- **Autenticazione JWT**: Supporto per login, registrazione e logout con token JWT.
+- **Gestione Utenti**: Creazione e gestione di utenti con ruoli specifici.
+- **Gestione Clienti**: Creazione e gestione di clienti con avatar personalizzati.
+- **Middleware Personalizzati**: Controllo del tipo di utente e prevenzione di accessi multipli.
+- **API RESTful**: Endpoint per l'autenticazione, la gestione dei profili e degli avatar.
+
+---
+
+## 🛠️ Tecnologie Utilizzate
+
+- **Framework**: Laravel 10
+- **Autenticazione**: JWT (JSON Web Token)
+- **Database**: MySQL
+- **Middleware**: Personalizzati per il controllo degli accessi
+- **Storage**: File system locale per gli avatar
+
+---
+
+## 📦 Installazione
+
+1. Clona il repository:
+   ```bash
+   git clone https://github.com/tuo-username/nome-repo.git
+   ```
+2. Installa le dipendenze:
+   ```bash
+   composer install
+   ```
+3. Configura il file `.env`:
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=nome_database
+   DB_USERNAME=root
+   DB_PASSWORD=password
+   ```
+4. Esegui le migrazioni e i seeders:
+   ```bash
+   php artisan migrate --seed
+   ```
+5. Avvia il server di sviluppo:
+   ```bash
+   php artisan serve
+   ```
+
+---
+
+## 🖥️ Configurazione
+
+Crea un file `.env` nella root del progetto con le seguenti variabili d'ambiente:
+JWT_SECRET=tuo_segreto_jwt
+JWT_TTL=60
+
+
+## 🧑‍💻 Utilizzo
+
+### Autenticazione
+
+- **Login**: `POST /api/auth/login`
+- **Registrazione**: `POST /api/auth/register`
+- **Logout**: `POST /api/auth/logout`
+- **Refresh Token**: `POST /api/auth/refresh`
+
+### Gestione Clienti
+
+- **Login Cliente**: `POST /api/customer/login`
+- **Registrazione Cliente**: `POST /api/customer/register`
+- **Upload Avatar**: `POST /api/customer/avatar/upload`
+- **Elimina Avatar**: `DELETE /api/customer/avatar/delete`
+
+## 🤝 Contributi
+
+Se vuoi contribuire al progetto, segui questi passaggi:
+
+1. Fork del repository.
+2. Crea un nuovo branch (`git checkout -b feature/nuova-funzionalità`).
+3. Fai commit delle tue modifiche (`git commit -m 'Aggiunta nuova funzionalità'`).
+4. Push del branch (`git push origin feature/nuova-funzionalità`).
+5. Apri una Pull Request.
+
+---
+
+## 📄 Licenza
+
+Questo progetto è sotto licenza MIT. Vedi il file [LICENSE](LICENSE) per maggiori dettagli.
